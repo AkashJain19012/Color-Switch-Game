@@ -11,16 +11,6 @@ public class Ball extends Circle {
 		super(centerX, centerY, radius, color);
 	}
 	
-	public void moveUp()
-	{
-		setY(-6);	
-	}
-	
-	public void moveDown()
-	{
-		setY(3);
-	}
-	
 	public double getX() 
 	{
 		return this.getCenterX();
@@ -33,12 +23,12 @@ public class Ball extends Circle {
 	
 	public void setX(double dist) 
 	{
-		this.setCenterX(getX()+dist);
+		this.setCenterX(this.getCenterX()+dist);
 	}
 	
 	public void setY(double dist) 
 	{
-		this.setCenterY(getY()+dist);
+		this.setCenterY(this.getCenterY()+dist);
 	}
 	
 	public void setColor(Color c)
