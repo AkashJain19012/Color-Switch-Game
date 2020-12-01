@@ -2,11 +2,14 @@ package application;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -30,6 +33,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Rotate; 
+import javafx.scene.shape.Shape;
 
 public class Game{ 
 	
@@ -42,8 +46,19 @@ public class Game{
 	
 	private Button pause_button;
 	
+	private Group root;
+	
 	public static Ball player;
+	
+	private ArrayList<Obstacle> obstacles;
+	private ArrayList<Group> roots;
 	int flag;
+	int value=80;
+	
+	int outside=1,inside=0,upper=0,lower=0;
+	squareObstacle o1=new squareObstacle("square");
+    circleObstacle o2=new circleObstacle("circle");
+    xObstacle o3=new xObstacle("x");
 	
 	Game(Stage stage, Scene tempScene)
 	{
@@ -51,6 +66,8 @@ public class Game{
 		prevScene= tempScene;
 		mainPane=new AnchorPane();
 		mainScene= new Scene(mainPane, WIDTH, HEIGHT);
+		obstacles=new ArrayList<Obstacle>();
+		roots=new ArrayList<>();
 	}
 	
     public void run() throws FileNotFoundException
@@ -64,6 +81,7 @@ public class Game{
     	
     	AnimationTimer timer=new AnimationTimer() {
     		public void handle(long now) {
+    			o1.checkCollision(root,player,outside,upper,inside,lower);
     			player.moveDown();
     		}
     	};
@@ -77,6 +95,9 @@ public class Game{
     			AnimationTimer timer2=new AnimationTimer() {
     				public void handle(long now) {
     					player.moveUp();
+    					o1.moveDown(root);
+    					o1.checkCollision(root,player,outside,upper,inside,lower);
+    					//root.setLayoutY(root.getLayoutY()+1);
     					flag++;
     					if (flag>30) {
     						stop();
@@ -97,10 +118,7 @@ public class Game{
         mainPane.getChildren().add(sp);
         mainPane.getChildren().add(player);
         
-        squareObstacle o1=new squareObstacle("square");
-        circleObstacle o2=new circleObstacle("circle");
-        xObstacle o3=new xObstacle("x");
-        Group root=o1.create();
+        root=o1.create(-80);
         mainPane.getChildren().add(root);
         
         Star star=new Star();
@@ -123,6 +141,7 @@ public class Game{
         pause_button.setOnAction(e -> {
         	pause();
         });
+        
 
     }
     
@@ -139,7 +158,8 @@ public class Game{
         mainPane.getChildren().add(pause_button);
         
 	}
-    
+	
+	
     public void pause()
     {
     	System.exit(0);
