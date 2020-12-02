@@ -13,28 +13,54 @@ import javafx.scene.shape.Path;
 
 public class Star {
 	
-	Group create() throws FileNotFoundException {
-		Image image = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\star.png"));  
+	Group root;
+	boolean used;
+	
+	Star(){
+		used=false;
+	}
+	
+	public void create(int y) throws FileNotFoundException {
+		Image image = new Image(new FileInputStream("D:\\Eclipse (Java Projects) 1\\APProject\\src\\Images\\star.png"));  
 	      
 	      ImageView imageView = new ImageView(image); 
-	      
-	      //Setting the position of the image 
 	      imageView.setX(190); 
-	      imageView.setY(290); 
-	      
-	      //setting the fit height and width of the image view 
+	      imageView.setY(290+y);
 	      imageView.setFitHeight(20); 
 	      imageView.setFitWidth(20); 
+	      imageView.setRotate(10); 
+	      imageView.setPreserveRatio(true);   
+	      root = new Group(imageView);  
 	      
-	      imageView.setRotate(10);
-	      
-	      //Setting the preserve ratio of the image view 
-	      imageView.setPreserveRatio(true);  
-	      
-	      //Creating a Group object  
-	      Group root = new Group(imageView);  
-	      
-	      return root;
+	      //return root;
+	}
+	
+	public boolean checkCollision(Ball player) {
+		
+		double checkcolmaxY=root.getBoundsInParent().getMaxY();
+		double checkcolminY=root.getBoundsInParent().getMinY();
+		double cur=player.getY();
+		
+		if (cur<=checkcolmaxY && cur>=checkcolminY && used==false) {
+			used=true;
+		}
+		
+		return used;
+	}
+	
+	public void moveUp()
+	{
+		root.setLayoutY(root.getLayoutY()-3);
+	}
+	
+	public void moveDown()
+	{
+		root.setLayoutY(root.getLayoutY()+3);
+	}
+	
+	public Group getRoot()
+	{
+		return root;
 	}
 
 }
