@@ -11,28 +11,28 @@ public class colorSwitcher {
 	
 	Group root;
 	
-	void create() {
+	void create(int y) {
 		
 		Path path1 = new Path();
 
         MoveTo moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         LineTo lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(170-30);
+        lineTo.setY(170-30+y);
         
         path1.getElements().add(moveTo); 
         path1.getElements().add(lineTo);
         
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(170-30);
+        moveTo.setY(170-30+y);
         
         ArcTo arcTo = new ArcTo();
         arcTo.setX(210);
-        arcTo.setY(180-30);
+        arcTo.setY(180-30+y);
         arcTo.setRadiusX(10);
         arcTo.setRadiusY(10);
         arcTo.setSweepFlag(true);
@@ -42,11 +42,11 @@ public class colorSwitcher {
         
         moveTo = new MoveTo(); 
         moveTo.setX(210); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(180-30);
+        lineTo.setY(180-30+y);
         
 //        path1.getElements().add(moveTo); 
         path1.getElements().add(lineTo);
@@ -60,22 +60,22 @@ public class colorSwitcher {
         Path path2 = new Path();
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(190-30);
+        lineTo.setY(190-30+y);
         
         path2.getElements().add(moveTo); 
         path2.getElements().add(lineTo);
         
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(190-30);
+        moveTo.setY(190-30+y);
         
         arcTo = new ArcTo();
         arcTo.setX(210);
-        arcTo.setY(180-30);
+        arcTo.setY(180-30+y);
         arcTo.setRadiusX(10);
         arcTo.setRadiusY(10);
         arcTo.setSweepFlag(false);
@@ -85,11 +85,11 @@ public class colorSwitcher {
         
         moveTo = new MoveTo(); 
         moveTo.setX(210); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(180-30);
+        lineTo.setY(180-30+y);
         
 //        path2.getElements().add(moveTo); 
         path2.getElements().add(lineTo);
@@ -102,11 +102,11 @@ public class colorSwitcher {
         Path path3 = new Path();
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(190-30);
+        moveTo.setY(190-30+y);
         
         arcTo = new ArcTo();
         arcTo.setX(190);
-        arcTo.setY(180-30);
+        arcTo.setY(180-30+y);
         arcTo.setRadiusX(10);
         arcTo.setRadiusY(10);
         arcTo.setSweepFlag(true);
@@ -116,22 +116,22 @@ public class colorSwitcher {
         
         moveTo = new MoveTo(); 
         moveTo.setX(190); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(180-30);
+        lineTo.setY(180-30+y);
         
 //        path3.getElements().add(moveTo); 
         path3.getElements().add(lineTo);
         
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(190-30);
+        lineTo.setY(190-30+y);
         
 //        path3.getElements().add(moveTo); 
         path3.getElements().add(lineTo);
@@ -143,11 +143,11 @@ public class colorSwitcher {
         Path path4 = new Path();
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(170-30);
+        moveTo.setY(170-30+y);
         
         arcTo = new ArcTo();
         arcTo.setX(190);
-        arcTo.setY(180-30);
+        arcTo.setY(180-30+y);
         arcTo.setRadiusX(10);
         arcTo.setRadiusY(10);
         arcTo.setSweepFlag(false);
@@ -157,22 +157,22 @@ public class colorSwitcher {
         
         moveTo = new MoveTo(); 
         moveTo.setX(190); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(180-30);
+        lineTo.setY(180-30+y);
         
 //        path4.getElements().add(moveTo); 
         path4.getElements().add(lineTo);
 
         moveTo = new MoveTo(); 
         moveTo.setX(200); 
-        moveTo.setY(180-30);
+        moveTo.setY(180-30+y);
         
         lineTo = new LineTo();
         lineTo.setX(200); 
-        lineTo.setY(170-30);
+        lineTo.setY(170-30+y);
         
 //        path4.getElements().add(moveTo); 
         path4.getElements().add(lineTo);
