@@ -16,7 +16,7 @@ public class circleObstacle extends Obstacle{
 		super(type);
 	}
 	
-	public Group create(int y) {
+	public void create(int y) {
 		
 		Path path1 = new Path();
 
@@ -248,7 +248,7 @@ public class circleObstacle extends Obstacle{
 //        }
         
         root = new Group(path1,path2,path3,path4);
-        return root;
+        //return root;
 		
 	}
 
