@@ -14,7 +14,7 @@ public class xObstacle extends Obstacle{
 		super(type);
 	}
 	
-	public Group create(int y) {
+	public void create(int y) {
 		
 		Path path1 = new Path();
         MoveTo moveTo = new MoveTo(); 
@@ -255,7 +255,7 @@ public class xObstacle extends Obstacle{
         path4.setStroke(Color.PURPLE);
         
         root = new Group(path1,path2,path3,path4);
-        return root;
+        //return root;
 		
 	}
 
