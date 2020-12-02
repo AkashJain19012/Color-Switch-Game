@@ -10,6 +10,22 @@ import javafx.scene.shape.Path;
 public class colorSwitcher {
 	
 	Group root;
+	boolean used;
+	
+	colorSwitcher()
+	{
+		used=false;
+	}
+	
+//	public void setUsed()
+//	{
+//		used=true;
+//	}
+//	
+//	public boolean getUsed()
+//	{
+//		return used;
+//	}
 	
 	void create(int y) {
 		
@@ -185,14 +201,15 @@ public class colorSwitcher {
         //return root;
 	}
 	
-	public Ball checkCollision(Ball player) {
+	public Ball checkCollision(Ball player)
+	{
 		
 		double checkcolmaxY=root.getBoundsInParent().getMaxY();
 		double checkcolminY=root.getBoundsInParent().getMinY();
 		double cur=player.getY();
 		Color initialcolor=(Color) player.getFill();
 		
-		if (cur<=checkcolmaxY && cur>=checkcolminY) {
+		if (cur<=checkcolmaxY && cur>=checkcolminY && used==false) {
 			Color colors[]=new Color[4];
 			colors[0]=Color.RED;
 			colors[1]=Color.BLUE;
@@ -205,9 +222,21 @@ public class colorSwitcher {
 			}
 			
 			player.setColor(colors[idx]);
+			used=true;
 		}
 		
 		return player;
+	}
+	
+	
+	public void moveUp()
+	{
+		root.setLayoutY(root.getLayoutY()-3);
+	}
+	
+	public void moveDown()
+	{
+		root.setLayoutY(root.getLayoutY()+3);
 	}
 	
 	public Group getRoot()

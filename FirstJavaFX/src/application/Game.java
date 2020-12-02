@@ -53,6 +53,9 @@ public class Game{
 	public static Ball player;
 	
 	private ArrayList<Obstacle> obstacles;
+	private ArrayList<Star> stars;
+	private ArrayList<colorSwitcher> colorSwitchers;
+	
 	private ArrayList<Group> roots;
 	int flag;
 	int value=80;
@@ -69,6 +72,8 @@ public class Game{
 		mainPane=new AnchorPane();
 		mainScene= new Scene(mainPane, WIDTH, HEIGHT);
 		obstacles=new ArrayList<Obstacle>();
+		colorSwitchers = new ArrayList<colorSwitcher>();
+		stars = new ArrayList<Star>();
 		roots=new ArrayList<>();
 	}
 	
@@ -77,18 +82,39 @@ public class Game{
     	player=new Ball(200, 510, 7, Color.RED);
     	
     	assignObstacles();
-    	assigncolorSwitcher();
+    	assignColorSwitchers();
+    	assignStars();
     	BackgroundFill background_fill = new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY); 
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
     	
     	AnimationTimer timer=new AnimationTimer() {
     		public void handle(long now) {
-    			int helperArr[]=obstacles.get(0).checkCollision(player,outside,upper);
-    			outside=helperArr[0];
-    			upper=helperArr[1];
-    			player=s1.checkCollision(player);
+//    			int helperArr[]=obstacles.get(0).checkCollision(player,outside,upper);
+//    			outside=helperArr[0];
+//    			upper=helperArr[1];
+//    			player=s1.checkCollision(player);
     			player.setY(3);
+    			
+    			//System.out.println(player.getY());
+    			
+    			if(player.getY()<obstacles.get(obstacles.size()-2).getRoot().getBoundsInParent().getCenterY())
+    	    	{
+    				System.out.println("nacho");
+    	    		assignObstacles();
+    	    		try {
+						assignColorSwitchers();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    	    		try {
+						assignStars();
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    	    	}
     		}
     	};
     	
@@ -108,9 +134,11 @@ public class Game{
     					{
     						player.setY(-6);
     						moveObstacles();
+    						moveStars();
+    						moveColorSwitchers();
     					}
     					//root.setLayoutY(root.getLayoutY()+1);
-    					player=s1.checkCollision(player);
+    					//player=s1.checkCollision(player);
     					flag++;
     					if (flag>30) {
     						stop();
@@ -121,6 +149,8 @@ public class Game{
     		}
         });
     	
+    	
+    	
     	mainStage.setScene(mainScene);
         mainStage.show();
         addButtons();
@@ -130,16 +160,6 @@ public class Game{
         
         mainPane.getChildren().add(sp);
         mainPane.getChildren().add(player);
-                
-        Star star=new Star();
-        Group root2=star.create();
-        mainPane.getChildren().add(root2);
-        
-//        s1=new colorSwitcher();
-//        //Group root1=s1.create();
-//        s1.create();
-//        root_colorswitcher=s1.getRoot();
-//        mainPane.getChildren().add(root_colorswitcher);
         
         pause_button.setOnAction(e -> {
         	pause();
@@ -170,24 +190,37 @@ public class Game{
     
     void assignObstacles()
     {
-    	obstacles.add(new squareObstacle("square"));
-    	obstacles.get(0).create(0);
-    	root_square=obstacles.get(0).getRoot();
-    	obstacles.add(new xObstacle("circle"));
-    	obstacles.get(1).create(-250);
-    	root_circle=obstacles.get(1).getRoot();
-    	obstacles.add(new circleObstacle("cross"));
-    	obstacles.get(2).create(-500);
-    	root_x=obstacles.get(2).getRoot();
-    	    	
-        mainPane.getChildren().add(root_square);
-        mainPane.getChildren().add(root_x);
-        mainPane.getChildren().add(root_circle);
+    	if(obstacles.size()>=3)
+    	{
+    		Obstacle o=obstacles.get(obstacles.size()-1);
+    		obstacles.add(new squareObstacle("square"));
+    		
+        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700);
+        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+        	obstacles.add(new xObstacle("circle"));
+        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1100);
+        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+        	obstacles.add(new circleObstacle("cross"));
+        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1500);
+        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+    	}
+    	else
+    	{
+    		obstacles.add(new squareObstacle("square"));
+        	obstacles.get(0).create(0);
+        	//System.out.println((int)obstacles.get(0).getRoot().getBoundsInParent().getCenterY());
+        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+        	obstacles.add(new xObstacle("circle"));
+        	obstacles.get(1).create(-400);
+        	//System.out.println((int)obstacles.get(1).getRoot().getBoundsInParent().getCenterY());
+        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+        	obstacles.add(new circleObstacle("cross"));
+        	obstacles.get(2).create(-800);
+        	//System.out.println((int)obstacles.get(2).getRoot().getBoundsInParent().getCenterY());
+        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+    	}
     	
-//        obstacles.get(0).rotate();
-//        obstacles.get(1).rotate();
-//        obstacles.get(2).rotate();
-        
+    	    	        
         for(Obstacle o:obstacles)
     	{
     		o.rotate();
@@ -195,13 +228,72 @@ public class Game{
         
     }
     
-    void assigncolorSwitcher() {
+    void assignStars() throws FileNotFoundException
+    {
+    	if(stars.size()>=3)
+    	{
+    		Star o=stars.get(stars.size()-1);
+    		stars.add(new Star());
+    		
+        	stars.get(stars.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700);
+        	mainPane.getChildren().add(stars.get(stars.size()-1).getRoot());
+        	stars.add(new Star());
+        	stars.get(stars.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1100);
+        	mainPane.getChildren().add(stars.get(stars.size()-1).getRoot());
+        	stars.add(new Star());
+        	stars.get(stars.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1500);
+        	mainPane.getChildren().add(stars.get(stars.size()-1).getRoot());
+    	}
+    	else
+    	{
+    		stars.add(new Star());
+        	stars.get(0).create(0);
+        	stars.add(new Star());
+        	stars.get(1).create(-400);
+        	stars.add(new Star());
+        	stars.get(2).create(-800);
+        	    	
+            mainPane.getChildren().add(stars.get(0).getRoot());
+            mainPane.getChildren().add(stars.get(1).getRoot());
+            mainPane.getChildren().add(stars.get(2).getRoot());
+    	}
+        
+    }
+    
+    void assignColorSwitchers() throws FileNotFoundException
+    {
+    	if(stars.size()>=3)
+    	{
+    		colorSwitcher o=colorSwitchers.get(colorSwitchers.size()-1);
+    		colorSwitchers.add(new colorSwitcher());
+    		
+        	colorSwitchers.get(colorSwitchers.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-550);
+        	mainPane.getChildren().add(colorSwitchers.get(colorSwitchers.size()-1).getRoot());
+        	colorSwitchers.add(new colorSwitcher());
+        	colorSwitchers.get(colorSwitchers.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-950);
+        	mainPane.getChildren().add(colorSwitchers.get(colorSwitchers.size()-1).getRoot());
+        	colorSwitchers.add(new colorSwitcher());
+        	colorSwitchers.get(colorSwitchers.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1350);
+        	mainPane.getChildren().add(colorSwitchers.get(colorSwitchers.size()-1).getRoot());
+    	}
+    	else
+    	{
+    		colorSwitchers.add(new colorSwitcher());
+        	colorSwitchers.get(0).create(-50);
+        	System.out.println((int)colorSwitchers.get(0).getRoot().getBoundsInParent().getCenterY());
+        	colorSwitchers.add(new colorSwitcher());
+        	colorSwitchers.get(1).create(-450);
+        	System.out.println((int)colorSwitchers.get(1).getRoot().getBoundsInParent().getCenterY());
+        	colorSwitchers.add(new colorSwitcher());
+        	colorSwitchers.get(2).create(-850);
+        	System.out.println((int)colorSwitchers.get(2).getRoot().getBoundsInParent().getCenterY());
+        	    	
+            mainPane.getChildren().add(colorSwitchers.get(0).getRoot());
+            mainPane.getChildren().add(colorSwitchers.get(1).getRoot());
+            mainPane.getChildren().add(colorSwitchers.get(2).getRoot());
+    	}
     	
-        s1=new colorSwitcher();
-        //Group root1=s1.create();
-        s1.create(0);
-        root_colorswitcher=s1.getRoot();
-        mainPane.getChildren().add(root_colorswitcher);
+        
     }
 
     public void moveObstacles()
@@ -211,4 +303,22 @@ public class Game{
     		o.moveDown();
     	}
     }
+    
+    public void moveStars()
+    {
+    	for(Star s:stars)
+    	{
+    		s.moveDown();
+    	}
+    }
+    
+    public void moveColorSwitchers()
+    {
+    	for(colorSwitcher c: colorSwitchers)
+    	{
+    		c.moveDown();
+    	}
+    }
+    
+    
 } 

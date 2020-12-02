@@ -41,7 +41,7 @@ public abstract class Obstacle {
 	
 	public abstract int[] checkCollision(Ball player,int outside,int upper);
 	
-	public abstract Group create(int y);
+	public abstract void create(int y);
 	
 	public abstract Group getRoot();
 	
