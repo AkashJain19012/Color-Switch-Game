@@ -47,7 +47,8 @@ public class Game{
 	
 	private Button pause_button;
 	
-	private Group root_square,root_circle,root_x;
+	private Group root_square,root_circle,root_x,root_colorswitcher;
+	private colorSwitcher s1;
 	
 	public static Ball player;
 	
@@ -76,15 +77,17 @@ public class Game{
     	player=new Ball(200, 510, 7, Color.RED);
     	
     	assignObstacles();
+    	assigncolorSwitcher();
     	BackgroundFill background_fill = new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY); 
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
     	
     	AnimationTimer timer=new AnimationTimer() {
     		public void handle(long now) {
-//    			int helperArr[]=obstacles.get(0).checkCollision(player,outside,upper);
-//    			outside=helperArr[0];
-//    			upper=helperArr[1];
+    			int helperArr[]=obstacles.get(0).checkCollision(player,outside,upper);
+    			outside=helperArr[0];
+    			upper=helperArr[1];
+    			player=s1.checkCollision(player);
     			player.setY(3);
     		}
     	};
@@ -107,6 +110,7 @@ public class Game{
     						moveObstacles();
     					}
     					//root.setLayoutY(root.getLayoutY()+1);
+    					player=s1.checkCollision(player);
     					flag++;
     					if (flag>30) {
     						stop();
@@ -131,11 +135,11 @@ public class Game{
         Group root2=star.create();
         mainPane.getChildren().add(root2);
         
-        colorSwitcher s1=new colorSwitcher();
-        Group root1=s1.create();
-        mainPane.getChildren().add(root1);
-       
-        
+//        s1=new colorSwitcher();
+//        //Group root1=s1.create();
+//        s1.create();
+//        root_colorswitcher=s1.getRoot();
+//        mainPane.getChildren().add(root_colorswitcher);
         
         pause_button.setOnAction(e -> {
         	pause();
@@ -167,19 +171,37 @@ public class Game{
     void assignObstacles()
     {
     	obstacles.add(new squareObstacle("square"));
-    	root_square = obstacles.get(0).create(0);
-    	obstacles.add(new xObstacle("cross"));
-    	root_x = obstacles.get(1).create(-250);
-    	obstacles.add(new circleObstacle("circle"));
-    	root_circle = obstacles.get(2).create(-500);
+    	obstacles.get(0).create(0);
+    	root_square=obstacles.get(0).getRoot();
+    	obstacles.add(new xObstacle("circle"));
+    	obstacles.get(1).create(-250);
+    	root_circle=obstacles.get(1).getRoot();
+    	obstacles.add(new circleObstacle("cross"));
+    	obstacles.get(2).create(-500);
+    	root_x=obstacles.get(2).getRoot();
     	    	
         mainPane.getChildren().add(root_square);
         mainPane.getChildren().add(root_x);
         mainPane.getChildren().add(root_circle);
     	
-        obstacles.get(0).rotate();
-        obstacles.get(1).rotate();
-        obstacles.get(2).rotate();
+//        obstacles.get(0).rotate();
+//        obstacles.get(1).rotate();
+//        obstacles.get(2).rotate();
+        
+        for(Obstacle o:obstacles)
+    	{
+    		o.rotate();
+    	}
+        
+    }
+    
+    void assigncolorSwitcher() {
+    	
+        s1=new colorSwitcher();
+        //Group root1=s1.create();
+        s1.create();
+        root_colorswitcher=s1.getRoot();
+        mainPane.getChildren().add(root_colorswitcher);
     }
 
     public void moveObstacles()
