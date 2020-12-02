@@ -199,7 +199,7 @@ public class Game{
     	
         s1=new colorSwitcher();
         //Group root1=s1.create();
-        s1.create();
+        s1.create(0);
         root_colorswitcher=s1.getRoot();
         mainPane.getChildren().add(root_colorswitcher);
     }
