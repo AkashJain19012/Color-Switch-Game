@@ -2,11 +2,14 @@ package application;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -30,11 +33,13 @@ import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Rotate; 
+import javafx.scene.shape.Shape;
 
 public class Game{ 
 	
 	private static final int HEIGHT = 600;
 	private static final int WIDTH = 400;
+	
 	
 	private Stage mainStage;
 	private AnchorPane mainPane;
@@ -42,8 +47,20 @@ public class Game{
 	
 	private Button pause_button;
 	
+	private Group root_square,root_circle,root_x,root_colorswitcher;
+	private colorSwitcher s1;
+	
 	public static Ball player;
+	
+	private ArrayList<Obstacle> obstacles;
+	private ArrayList<Group> roots;
 	int flag;
+	int value=80;
+	
+	int outside=1,upper=0;
+//	squareObstacle o1=new squareObstacle("square");
+//    circleObstacle o2=new circleObstacle("circle");
+//    xObstacle o3=new xObstacle("x");
 	
 	Game(Stage stage, Scene tempScene)
 	{
@@ -51,20 +68,27 @@ public class Game{
 		prevScene= tempScene;
 		mainPane=new AnchorPane();
 		mainScene= new Scene(mainPane, WIDTH, HEIGHT);
+		obstacles=new ArrayList<Obstacle>();
+		roots=new ArrayList<>();
 	}
 	
     public void run() throws FileNotFoundException
     {  
-    	player=new Ball(200, 10, 7, Color.RED);
+    	player=new Ball(200, 510, 7, Color.RED);
     	
-    	
+    	assignObstacles();
+    	assigncolorSwitcher();
     	BackgroundFill background_fill = new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY); 
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
     	
     	AnimationTimer timer=new AnimationTimer() {
     		public void handle(long now) {
-    			player.moveDown();
+    			int helperArr[]=obstacles.get(0).checkCollision(player,outside,upper);
+    			outside=helperArr[0];
+    			upper=helperArr[1];
+    			player=s1.checkCollision(player);
+    			player.setY(3);
     		}
     	};
     	
@@ -76,14 +100,24 @@ public class Game{
     			flag=0;
     			AnimationTimer timer2=new AnimationTimer() {
     				public void handle(long now) {
-    					player.moveUp();
+    					if((player.getY()-20) > HEIGHT/2)
+    					{
+    						player.setY(-6);
+    					}
+    					else
+    					{
+    						player.setY(-6);
+    						moveObstacles();
+    					}
+    					//root.setLayoutY(root.getLayoutY()+1);
+    					player=s1.checkCollision(player);
     					flag++;
     					if (flag>30) {
     						stop();
     					}
     				}
     			};
-    			timer2.start();;
+    			timer2.start();
     		}
         });
     	
@@ -96,33 +130,21 @@ public class Game{
         
         mainPane.getChildren().add(sp);
         mainPane.getChildren().add(player);
-        
-        squareObstacle o1=new squareObstacle("square");
-        circleObstacle o2=new circleObstacle("circle");
-        xObstacle o3=new xObstacle("x");
-        Group root=o1.create();
-        mainPane.getChildren().add(root);
-        
+                
         Star star=new Star();
         Group root2=star.create();
         mainPane.getChildren().add(root2);
         
-        colorSwitcher s1=new colorSwitcher();
-        Group root1=s1.create();
-        mainPane.getChildren().add(root1);
-       
-        RotateTransition rotate = new RotateTransition();
-        rotate.setAxis(Rotate.Z_AXIS);
-        rotate.setByAngle(360);
-        rotate.setRate(0.1);
-        rotate.setCycleCount(Timeline.INDEFINITE);
-        rotate.setDuration(Duration.INDEFINITE); 
-        rotate.setNode(root);
-        rotate.play();
+//        s1=new colorSwitcher();
+//        //Group root1=s1.create();
+//        s1.create();
+//        root_colorswitcher=s1.getRoot();
+//        mainPane.getChildren().add(root_colorswitcher);
         
         pause_button.setOnAction(e -> {
         	pause();
         });
+        
 
     }
     
@@ -139,10 +161,54 @@ public class Game{
         mainPane.getChildren().add(pause_button);
         
 	}
-    
+	
+	
     public void pause()
     {
     	System.exit(0);
     }
+    
+    void assignObstacles()
+    {
+    	obstacles.add(new squareObstacle("square"));
+    	obstacles.get(0).create(0);
+    	root_square=obstacles.get(0).getRoot();
+    	obstacles.add(new xObstacle("circle"));
+    	obstacles.get(1).create(-250);
+    	root_circle=obstacles.get(1).getRoot();
+    	obstacles.add(new circleObstacle("cross"));
+    	obstacles.get(2).create(-500);
+    	root_x=obstacles.get(2).getRoot();
+    	    	
+        mainPane.getChildren().add(root_square);
+        mainPane.getChildren().add(root_x);
+        mainPane.getChildren().add(root_circle);
+    	
+//        obstacles.get(0).rotate();
+//        obstacles.get(1).rotate();
+//        obstacles.get(2).rotate();
+        
+        for(Obstacle o:obstacles)
+    	{
+    		o.rotate();
+    	}
+        
+    }
+    
+    void assigncolorSwitcher() {
+    	
+        s1=new colorSwitcher();
+        //Group root1=s1.create();
+        s1.create();
+        root_colorswitcher=s1.getRoot();
+        mainPane.getChildren().add(root_colorswitcher);
+    }
 
+    public void moveObstacles()
+    {
+    	for(Obstacle o:obstacles)
+    	{
+    		o.moveDown();
+    	}
+    }
 } 
