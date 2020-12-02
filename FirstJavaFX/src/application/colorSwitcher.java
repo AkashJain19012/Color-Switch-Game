@@ -9,7 +9,9 @@ import javafx.scene.shape.Path;
 
 public class colorSwitcher {
 	
-	Group create() {
+	Group root;
+	
+	void create() {
 		
 		Path path1 = new Path();
 
@@ -179,7 +181,38 @@ public class colorSwitcher {
         path4.setStroke(Color.PURPLE);
 
         
-        Group root = new Group(path1,path2,path3,path4);
-        return root;
+        root = new Group(path1,path2,path3,path4);
+        //return root;
 	}
+	
+	public Ball checkCollision(Ball player) {
+		
+		double checkcolmaxY=root.getBoundsInParent().getMaxY();
+		double checkcolminY=root.getBoundsInParent().getMinY();
+		double cur=player.getY();
+		Color initialcolor=(Color) player.getFill();
+		
+		if (cur<=checkcolmaxY && cur>=checkcolminY) {
+			Color colors[]=new Color[4];
+			colors[0]=Color.RED;
+			colors[1]=Color.BLUE;
+			colors[2]=Color.PURPLE;
+			colors[3]=Color.YELLOW;
+			int idx=(int)(Math.random()*4);
+			
+			if (initialcolor==colors[idx]) {
+				idx=(idx+1)%4;
+			}
+			
+			player.setColor(colors[idx]);
+		}
+		
+		return player;
+	}
+	
+	public Group getRoot()
+	{
+		return root;
+	}
+
 }
