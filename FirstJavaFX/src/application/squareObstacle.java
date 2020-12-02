@@ -29,7 +29,7 @@ public class squareObstacle extends Obstacle {
 		System.out.println(path1.getLayoutBounds());
 	}
 
-	public Group create(int y) {
+	public void create(int y) {
 		//FirstPart
 		//Path path1 = new Path();
 		MoveTo moveTo = new MoveTo(); 
@@ -226,7 +226,7 @@ public class squareObstacle extends Obstacle {
 		path4.setStroke(Color.PURPLE);
 
 		root = new Group(path1,path2,path3,path4);
-		return root;
+		//return root;
 	}
 
 	public int[] checkCollision(Ball player,int outside,int upper) {
