@@ -252,10 +252,74 @@ public class circleObstacle extends Obstacle{
 		
 	}
 
-	@Override
-	public int[] checkCollision(Ball player, int outside, int upper) {
-		// TODO Auto-generated method stub
-		return null;
+	public int[] checkCollision(Ball player,int outside,int upper) {
+		double checkcolmaxY=root.getBoundsInParent().getMaxY();
+		double checkcolminY=root.getBoundsInParent().getMinY();
+		double cur=player.getY();
+
+		double angle1=-1,angle2=-1;
+
+		if (outside==1) {
+			if (upper==0) {
+				if (checkcolminY<=cur) {
+					angle1=root.getRotate();
+					upper=1;
+					outside=0;
+
+				}
+			}
+			else {
+				if (checkcolmaxY>=cur) {
+					angle2=root.getRotate();
+					outside=0;					
+				}
+			}
+		}
+		else {
+			if (cur<=checkcolminY) {
+				angle1=root.getRotate();
+				outside=1;
+				upper=0;
+			}
+			else if (cur>=checkcolmaxY) {
+				angle2=root.getRotate();
+				outside=1;
+			}
+		}
+		
+		
+		if (angle1>=0 && angle1<=90) {
+			System.out.println("purple");
+		}
+		else if (angle1>=90 && angle1<=180) {
+			System.out.println("yellow");
+		}
+		else if (angle1>=180 && angle1<=270) {
+			System.out.println("blue");
+		}
+		else if (angle1>=270 && angle1<=360) {
+			System.out.println("red");
+		}
+
+		if (angle2>=0 && angle2<=90) {
+			System.out.println("blue");
+		}
+		else if (angle2>=90 && angle2<=180) {
+			System.out.println("red");
+		}
+		else if (angle2>=180 && angle2<=270) {
+			System.out.println("purple");
+		}
+		else if (angle2>=270 && angle2<=360) {
+			System.out.println("yellow");
+		}
+
+		int helperArr[] =new int[2];
+		helperArr[0]=outside;
+		helperArr[1]=upper;
+
+
+		return helperArr;
 	}
 
 	@Override
