@@ -1,5 +1,7 @@
 package application;
 
+import java.util.Random;
+
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
@@ -215,7 +217,8 @@ public class colorSwitcher {
 			colors[1]=Color.BLUE;
 			colors[2]=Color.PURPLE;
 			colors[3]=Color.YELLOW;
-			int idx=(int)(Math.random()*4);
+			Random r=new Random();
+			int idx=r.nextInt(3);
 			
 			if (initialcolor==colors[idx]) {
 				idx=(idx+1)%4;

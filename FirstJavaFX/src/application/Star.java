@@ -43,6 +43,7 @@ public class Star {
 		
 		if (cur<=checkcolmaxY && cur>=checkcolminY && used==false) {
 			used=true;
+			System.out.println("collide");
 		}
 		
 		return used;
@@ -61,6 +62,11 @@ public class Star {
 	public Group getRoot()
 	{
 		return root;
+	}
+	
+	public boolean getUsed()
+	{
+		return used;
 	}
 
 }

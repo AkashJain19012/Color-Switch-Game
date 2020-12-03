@@ -14,6 +14,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -22,6 +23,7 @@ import javafx.util.Duration;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -46,23 +48,20 @@ public class Game{
 	private Scene mainScene,prevScene;
 	
 	private Button pause_button;
+	private TextField score_display;
 	
-	private Group root_square,root_circle,root_x,root_colorswitcher;
-	private colorSwitcher s1;
 	
-	public static Ball player;
+	private Ball player;
+	private int score=0;
+	
+	
 	
 	private ArrayList<Obstacle> obstacles;
 	private ArrayList<Star> stars;
 	private ArrayList<colorSwitcher> colorSwitchers;
 	
-	private ArrayList<Group> roots;
 	int flag;
 	int value=80;
-	
-	int outside_square=1,upper_square=0;
-	int outside_Circle=1,upper_Circle=0;
-	int outside_X=1,upper_X=0;
 	
 	Game(Stage stage, Scene tempScene)
 	{
@@ -73,7 +72,6 @@ public class Game{
 		obstacles=new ArrayList<Obstacle>();
 		colorSwitchers = new ArrayList<colorSwitcher>();
 		stars = new ArrayList<Star>();
-		roots=new ArrayList<>();
 	}
 	
     public void run() throws FileNotFoundException
@@ -174,7 +172,19 @@ public class Game{
 		pause_button.setTextFill(Color.WHITE);
 		pause_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		
+		score_display = new TextField ();
+		score_display.setLayoutX(0);
+		score_display.setLayoutY(0);
+		score_display.setPrefSize(60, 40);
+		score_display.setStyle("-fx-background-color: BlueViolet");
+		score_display.setText("0");
+		score_display.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
+		score_display.setAlignment(Pos.BASELINE_CENTER);
+		
+		
         mainPane.getChildren().add(pause_button);
+        mainPane.getChildren().add(score_display);
+        
         
 	}
 	
@@ -193,10 +203,10 @@ public class Game{
     		
         	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700);
         	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
-        	obstacles.add(new xObstacle("circle"));
+        	obstacles.add(new xObstacle("x"));
         	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1100);
         	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
-        	obstacles.add(new circleObstacle("cross"));
+        	obstacles.add(new circleObstacle("circle"));
         	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1500);
         	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
     	}
@@ -206,11 +216,11 @@ public class Game{
         	obstacles.get(0).create(0);
         	//System.out.println((int)obstacles.get(0).getRoot().getBoundsInParent().getCenterY());
         	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
-        	obstacles.add(new xObstacle("circle"));
+        	obstacles.add(new xObstacle("x"));
         	obstacles.get(1).create(-400);
         	//System.out.println((int)obstacles.get(1).getRoot().getBoundsInParent().getCenterY());
         	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
-        	obstacles.add(new circleObstacle("cross"));
+        	obstacles.add(new circleObstacle("circle"));
         	obstacles.get(2).create(-800);
         	//System.out.println((int)obstacles.get(2).getRoot().getBoundsInParent().getCenterY());
         	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
@@ -294,26 +304,72 @@ public class Game{
     
     public void checkCollide() {
     	
-    	int helperArr1[]=obstacles.get(obstacles.size()-3).checkCollision(player,outside_square,upper_square);
-		outside_square=helperArr1[0];
-		upper_square=helperArr1[1];
-//		if (obstacles.size()<=3) {
-//			helperArr=obstacles.get(obstacles.size()-1).checkCollision(player,outside_Circle,upper_Circle);
-//		}
-//		else {
-//			helperArr=obstacles.get(obstacles.size()-4).checkCollision(player,outside_Circle,upper_Circle);
-//		}
-//		outside_Circle=helperArr[0];
-//		upper_Circle=helperArr[1];
-//		int helperArr3[]=new int[2];
-//		if (obstacles.size()<=3) {
-//			helperArr3=obstacles.get(obstacles.size()-2).checkCollision(player,outside_X,upper_X);
-//		}
-//		else {
-//			helperArr3=obstacles.get(obstacles.size()-5).checkCollision(player,outside_X,upper_X);
-//		}
-//		outside_X=helperArr3[0];
-//		upper_X=helperArr3[1];
+    	obstacles.get(obstacles.size()-3).checkCollision(player);
+    	
+		if (obstacles.size()<=3) 
+		{
+			obstacles.get(obstacles.size()-1).checkCollision(player);
+		}
+		else 
+		{
+			obstacles.get(obstacles.size()-4).checkCollision(player);
+		}
+		
+		if (obstacles.size()<=3) 
+		{
+			obstacles.get(obstacles.size()-2).checkCollision(player);
+		}
+		else 
+		{
+			obstacles.get(obstacles.size()-5).checkCollision(player);
+		}
+		
+		if (colorSwitchers.size()<=3) {
+			player=colorSwitchers.get(colorSwitchers.size()-1).checkCollision(player);
+			player=colorSwitchers.get(colorSwitchers.size()-2).checkCollision(player);
+			player=colorSwitchers.get(colorSwitchers.size()-3).checkCollision(player);
+		}
+		else {
+			player=colorSwitchers.get(colorSwitchers.size()-3).checkCollision(player);
+			player=colorSwitchers.get(colorSwitchers.size()-4).checkCollision(player);
+			player=colorSwitchers.get(colorSwitchers.size()-5).checkCollision(player);
+		}
+		
+		boolean starHit=false;
+		if (stars.size()<=3) {
+			for(int i=1;i<=3;++i)
+			{
+				if(stars.get(stars.size()-i).getUsed()==false)
+				{
+					starHit=stars.get(stars.size()-i).checkCollision(player);
+					if(starHit)
+					{
+						score++;
+						break;
+					}
+				}
+			}
+		}
+		else {
+			for(int i=3;i<=5;++i)
+			{
+				
+				if(stars.get(stars.size()-i).getUsed()==false)
+				{
+					starHit=stars.get(stars.size()-i).checkCollision(player);
+					if(starHit)
+					{
+						score++;
+						break;
+					}
+				}	
+			}
+		}
+		
+		score_display.setText(Integer.toString(score));
+		
+//		System.out.println("Score : "+score);
+		
 
     }
     

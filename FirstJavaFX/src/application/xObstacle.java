@@ -1,14 +1,18 @@
 package application;
 
+
+
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.Shape;
 
 public class xObstacle extends Obstacle{
 	
-	
+	Path path1,path2,path3,path4;
 
 	xObstacle(String type) {
 		super(type);
@@ -16,7 +20,7 @@ public class xObstacle extends Obstacle{
 	
 	public void create(int y) {
 		
-		Path path1 = new Path();
+		path1 = new Path();
         MoveTo moveTo = new MoveTo(); 
         moveTo.setX(140); 
         moveTo.setY(300+y);
@@ -76,7 +80,7 @@ public class xObstacle extends Obstacle{
         path1.setStroke(Color.RED);
         
         //SecondPart
-        Path path2 = new Path();
+        path2 = new Path();
         moveTo = new MoveTo(); 
         moveTo.setX(140); 
         moveTo.setY(300+y);
@@ -136,7 +140,7 @@ public class xObstacle extends Obstacle{
         
         //ThirdPart
         
-        Path path3 = new Path();
+        path3 = new Path();
         moveTo = new MoveTo(); 
         moveTo.setX(140); 
         moveTo.setY(300+y);
@@ -196,7 +200,7 @@ public class xObstacle extends Obstacle{
         
         //FourthPart
         
-        Path path4 = new Path();
+        path4 = new Path();
         moveTo = new MoveTo(); 
         moveTo.setX(140); 
         moveTo.setY(300+y);
@@ -260,9 +264,25 @@ public class xObstacle extends Obstacle{
 	}
 
 	@Override
-	public int[] checkCollision(Ball player, int outside, int upper) {
+	public void checkCollision(Ball player) {
+		
 		// TODO Auto-generated method stub
-		return null;
+		if(((Path)Shape.intersect(player, path1)).getElements().size()>0)
+		{
+			System.out.println("red");
+		}
+		else if(((Path)Shape.intersect(player, path2)).getElements().size()>0)
+		{
+			System.out.println("blue");
+		}
+		else if(((Path)Shape.intersect(player, path3)).getElements().size()>0)
+		{
+			System.out.println("yellow");
+		}
+		else if(((Path)Shape.intersect(player, path4)).getElements().size()>0)
+		{
+			System.out.println("purple");
+		}
 	}
 
 	@Override
