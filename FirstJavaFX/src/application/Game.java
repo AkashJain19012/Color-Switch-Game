@@ -60,10 +60,9 @@ public class Game{
 	int flag;
 	int value=80;
 	
-	int outside=1,upper=0;
-//	squareObstacle o1=new squareObstacle("square");
-//    circleObstacle o2=new circleObstacle("circle");
-//    xObstacle o3=new xObstacle("x");
+	int outside_square=1,upper_square=0;
+	int outside_Circle=1,upper_Circle=0;
+	int outside_X=1,upper_X=0;
 	
 	Game(Stage stage, Scene tempScene)
 	{
@@ -90,10 +89,9 @@ public class Game{
     	
     	AnimationTimer timer=new AnimationTimer() {
     		public void handle(long now) {
-//    			int helperArr[]=obstacles.get(0).checkCollision(player,outside,upper);
-//    			outside=helperArr[0];
-//    			upper=helperArr[1];
-//    			player=s1.checkCollision(player);
+    			
+    			checkCollide();
+    			
     			player.setY(3);
     			
     			//System.out.println(player.getY());
@@ -137,8 +135,6 @@ public class Game{
     						moveStars();
     						moveColorSwitchers();
     					}
-    					//root.setLayoutY(root.getLayoutY()+1);
-    					//player=s1.checkCollision(player);
     					flag++;
     					if (flag>30) {
     						stop();
@@ -280,13 +276,13 @@ public class Game{
     	{
     		colorSwitchers.add(new colorSwitcher());
         	colorSwitchers.get(0).create(-50);
-        	System.out.println((int)colorSwitchers.get(0).getRoot().getBoundsInParent().getCenterY());
+        	//System.out.println((int)colorSwitchers.get(0).getRoot().getBoundsInParent().getCenterY());
         	colorSwitchers.add(new colorSwitcher());
         	colorSwitchers.get(1).create(-450);
-        	System.out.println((int)colorSwitchers.get(1).getRoot().getBoundsInParent().getCenterY());
+        	//System.out.println((int)colorSwitchers.get(1).getRoot().getBoundsInParent().getCenterY());
         	colorSwitchers.add(new colorSwitcher());
         	colorSwitchers.get(2).create(-850);
-        	System.out.println((int)colorSwitchers.get(2).getRoot().getBoundsInParent().getCenterY());
+        	//System.out.println((int)colorSwitchers.get(2).getRoot().getBoundsInParent().getCenterY());
         	    	
             mainPane.getChildren().add(colorSwitchers.get(0).getRoot());
             mainPane.getChildren().add(colorSwitchers.get(1).getRoot());
@@ -295,7 +291,32 @@ public class Game{
     	
         
     }
+    
+    public void checkCollide() {
+    	
+    	int helperArr1[]=obstacles.get(obstacles.size()-3).checkCollision(player,outside_square,upper_square);
+		outside_square=helperArr1[0];
+		upper_square=helperArr1[1];
+//		if (obstacles.size()<=3) {
+//			helperArr=obstacles.get(obstacles.size()-1).checkCollision(player,outside_Circle,upper_Circle);
+//		}
+//		else {
+//			helperArr=obstacles.get(obstacles.size()-4).checkCollision(player,outside_Circle,upper_Circle);
+//		}
+//		outside_Circle=helperArr[0];
+//		upper_Circle=helperArr[1];
+//		int helperArr3[]=new int[2];
+//		if (obstacles.size()<=3) {
+//			helperArr3=obstacles.get(obstacles.size()-2).checkCollision(player,outside_X,upper_X);
+//		}
+//		else {
+//			helperArr3=obstacles.get(obstacles.size()-5).checkCollision(player,outside_X,upper_X);
+//		}
+//		outside_X=helperArr3[0];
+//		upper_X=helperArr3[1];
 
+    }
+    
     public void moveObstacles()
     {
     	for(Obstacle o:obstacles)
