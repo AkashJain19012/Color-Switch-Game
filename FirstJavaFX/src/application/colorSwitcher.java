@@ -246,5 +246,10 @@ public class colorSwitcher {
 	{
 		return root;
 	}
+	
+	public boolean getUsed()
+	{
+		return used;
+	}
 
 }

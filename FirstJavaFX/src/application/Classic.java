@@ -2,7 +2,9 @@ package application;
 	
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -31,16 +33,21 @@ public class Classic{
 	
 	private Stage mainStage;
 	private AnchorPane mainPane;
-	private Scene mainScene,prevScene;
+	private Scene mainScene,prevScene,homeScene;
+	private Game g;
 	
 	private Button play_button,resume_button,back_button;
 	
-	public Classic(Stage stage, Scene tempScene) throws FileNotFoundException
+	private ArrayList<Game> savedGames;
+	
+	public Classic(Stage stage, Scene tempScene,Scene homeScene) throws FileNotFoundException
 	{
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
 		mainStage = stage;
 		prevScene=tempScene;
+		this.homeScene=homeScene;
+		savedGames=new ArrayList<Game>();
 		run();
 		
 	}
@@ -56,6 +63,7 @@ public class Classic{
 		addButtons();
 		
 		
+		
 		play_button.setOnAction(e->{
 			try {
 				play();
@@ -66,7 +74,12 @@ public class Classic{
 		});
 		
 		resume_button.setOnAction( e-> {
-			resume();
+			try {
+				resume();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		
 		back_button.setOnAction(e -> {
@@ -112,19 +125,45 @@ public class Classic{
 	
 	public void play() throws FileNotFoundException
 	{
-		Game g=new Game(mainStage,mainScene);
+		g=new Game(mainStage,mainScene,homeScene);
 		g.run();
+		AnimationTimer timer=new AnimationTimer() {
+    		public void handle(long now) {
+    			if(g.getSaved())
+    			{
+    				savedGames.add(g);
+    				System.out.println("Game Saved");
+    				stop();
+    			}
+    		}
+		};
+		timer.start();
+		
 		
 	}
 	
-	public void resume()
+	public void resume() throws FileNotFoundException
 	{
-		
+		System.out.println("In resume function");
+		if(savedGames.size()>0)
+		{
+			System.out.println("trying to resume game");
+			ComboBox list= new ComboBox();
+			for(int i=0;i<savedGames.size();++i)
+			{
+				list.getItems().add(savedGames.get(i).getName());
+			}
+			mainPane.getChildren().add(list);
+			
+		}
+		else
+			System.out.println("Empty");
 	}
 	
 	public void back()
-	{        
-        mainStage.setScene(prevScene);
+	{    
+		System.out.println("back");
+		mainStage.setScene(prevScene);
 	}
 	
 	public Stage getMainStage()

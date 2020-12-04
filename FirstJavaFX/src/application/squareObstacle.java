@@ -230,24 +230,38 @@ public class squareObstacle extends Obstacle {
 		//return root;
 	}
 
-public void checkCollision(Ball player) {
+	public boolean checkCollision(Ball player) 
+	{
+		
+		Path hitPath=new Path();
+		hitPath.setFill(player.getFill());
 		
 		// TODO Auto-generated method stub
 		if(((Path)Shape.intersect(player, path1)).getElements().size()>0)
 		{
 			System.out.println("red");
+			hitPath=path1;
 		}
 		else if(((Path)Shape.intersect(player, path2)).getElements().size()>0)
 		{
-			System.out.println("blue");
+			hitPath=path2;
 		}
 		else if(((Path)Shape.intersect(player, path3)).getElements().size()>0)
 		{
-			System.out.println("yellow");
+			hitPath=path3;
 		}
 		else if(((Path)Shape.intersect(player, path4)).getElements().size()>0)
 		{
-			System.out.println("purple");
+			hitPath=path4;
+		}
+		if(hitPath.getFill()==player.getFill())
+		{
+			return false;
+		}
+		else
+		{
+			System.out.println("collide");
+			return true;
 		}
 	}
 	

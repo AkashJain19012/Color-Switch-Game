@@ -4,9 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -25,22 +27,34 @@ public class PauseScreen {
 	
 	private Stage mainStage;
 	private AnchorPane mainPane;
-	private Scene mainScene,prevScene;
+	private Scene mainScene,prevScene,homeScene;
 	
 	private Button resume_button,save_button,home_button;
 	private Label pause_label;
+	private TextField name_field;
+	
+	private int flag=0;
+	private static boolean saved;
+	private static boolean resume;
+	private String name;
 	
 	
-	PauseScreen(Stage stage,Scene tempScene){
+	PauseScreen(Stage stage,Scene tempScene,Scene homeScene)
+	{
 		
 		this.mainStage=stage;
 		prevScene=tempScene;
+		saved=false;
+		resume=false;
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
+		this.homeScene=homeScene;
 	}
 	
 	
-	public void run() throws FileNotFoundException {
+	public void run() throws FileNotFoundException 
+	{
+		
 		
 		BackgroundFill background_fill = new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY); 
 		Background background = new Background(background_fill); 
@@ -50,28 +64,63 @@ public class PauseScreen {
         mainStage.show(); 
         addButtons();
         
-        resume_button.setOnAction(e -> back());
+        home_button.setOnAction(e -> {
+			backToHome();
+		});
+        
+        resume_button.setOnAction(e -> {
+        	resume();
+        });
+        
+        save_button.setOnAction(e -> {
+        	//System.out.println("save button");
+        	save();
+        });
 	}
 	
-	public void addButtons() throws FileNotFoundException {
+	private void backToHome() {
+		// TODO Auto-generated method stub
+		mainStage.setScene(homeScene);
 		
-		pause_label = new Label("PAUSE");
-		pause_label.setLayoutX(150);
-		pause_label.setLayoutY(200);
-		pause_label.setTextFill(Color.WHITE);
-		pause_label.setFont(Font.font ("Verdana",FontWeight.BOLD, 25));
+	}
+	
+	public void resume()
+	{       
+		resume=true;
+        mainStage.setScene(prevScene);
+	}
+	
+	public boolean getResume()
+	{
+		return resume;
+	}
+	
+	public void setResume()
+	{
+		resume=false;
+	}
+	
+	public void save()
+	{
+		name=name_field.getText();
+		saved=true;
+		mainStage.setScene(prevScene);
 		
-		/*
-		Image img1 = new Image(new FileInputStream("D:\\Eclipse (Java Projects) 1\\APProject\\src\\Images\\play2.png"));  
-	    ImageView view1 = new ImageView(img1);
-	    view1.setFitHeight(80);
-	    view1.setPreserveRatio(true);
-	    resume_button = new Button();
-	    resume_button.setTranslateX(150);
-	    resume_button.setTranslateY(250);
-	    resume_button.setPrefSize(80, 80);
-	    resume_button.setGraphic(view1);
-	    */
+	}
+	
+	public String getName()
+	{
+		return name;
+	}
+	
+	public boolean getSaved()
+	{
+		return saved;
+	}
+
+
+	public void addButtons() throws FileNotFoundException 
+	{
 		
 		resume_button=new Button("RESUME");
 		resume_button.setLayoutX(150);
@@ -82,7 +131,7 @@ public class PauseScreen {
 		resume_button.setTextFill(Color.WHITE);
 		resume_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 	    
-	    save_button=new Button("SAVE");
+	    save_button=new Button("SAVE AS");
 		save_button.setLayoutX(150);
 		save_button.setLayoutY(300);
 		save_button.setMinSize(120,70);
@@ -91,7 +140,15 @@ public class PauseScreen {
 		save_button.setTextFill(Color.WHITE);
 		save_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		
-		Image img1 = new Image(new FileInputStream("D:\\Eclipse (Java Projects) 1\\APProject\\src\\Images\\home.png"));  
+		name_field = new TextField ();
+		name_field.setLayoutX(150);
+		name_field.setLayoutY(400);
+		name_field.setPrefSize(120, 70);
+		name_field.setStyle("-fx-background-color: BlueViolet");
+		name_field.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
+		name_field.setAlignment(Pos.BASELINE_CENTER);
+		
+		Image img1 = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\home.png"));  
 	    ImageView view1 = new ImageView(img1);
 	    view1.setFitHeight(50);
 	    view1.setPreserveRatio(true);
@@ -102,16 +159,16 @@ public class PauseScreen {
 	    home_button.setGraphic(view1);
 	    home_button.setStyle("-fx-background-color: transparent;");
 		
-		mainPane.getChildren().add(pause_label);
+//		mainPane.getChildren().add(pause_label);
 		mainPane.getChildren().add(resume_button);
 		mainPane.getChildren().add(save_button);
 		mainPane.getChildren().add(home_button);
+		mainPane.getChildren().add(name_field);
 	}
 	
-	public void back()
-	{        
-        mainStage.setScene(prevScene);
-	}
+
+	
+	
 	
 
 }

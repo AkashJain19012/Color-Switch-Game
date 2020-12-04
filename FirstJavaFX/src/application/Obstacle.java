@@ -39,7 +39,7 @@ public abstract class Obstacle {
         rotate.play();
 	}
 	
-	public abstract void checkCollision(Ball player);
+	public abstract boolean checkCollision(Ball player);
 	
 	public abstract void create(int y);
 	

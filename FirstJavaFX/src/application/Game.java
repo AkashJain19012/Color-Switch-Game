@@ -45,17 +45,20 @@ public class Game{
 	
 	private Stage mainStage;
 	private AnchorPane mainPane;
-	private Scene mainScene,prevScene;
+	private Scene mainScene,prevScene,homeScene;
 	
 	private Button pause_button;
 	private TextField score_display;
 	
+	private PauseScreen pause;
+	
+	boolean saved=false;
 	
 	private Ball player;
-	private int score=0;
+	private int score=0,flagA;
+	private String name;
 	
-	
-	
+	AnimationTimer timer,timer2;
 	private ArrayList<Obstacle> obstacles;
 	private ArrayList<Star> stars;
 	private ArrayList<colorSwitcher> colorSwitchers;
@@ -63,8 +66,9 @@ public class Game{
 	int flag;
 	int value=80;
 	
-	Game(Stage stage, Scene tempScene)
+	Game(Stage stage, Scene tempScene,Scene homeScene)
 	{
+		flagA=0;
 		mainStage=stage;
 		prevScene= tempScene;
 		mainPane=new AnchorPane();
@@ -72,10 +76,24 @@ public class Game{
 		obstacles=new ArrayList<Obstacle>();
 		colorSwitchers = new ArrayList<colorSwitcher>();
 		stars = new ArrayList<Star>();
+		this.homeScene=homeScene;
+		
+	}
+	
+	public void setName(String name)
+	{
+		this.name=name;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 	
     public void run() throws FileNotFoundException
     {  
+    	
+    	
     	player=new Ball(200, 510, 7, Color.RED);
     	
     	assignObstacles();
@@ -85,8 +103,36 @@ public class Game{
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
     	
-    	AnimationTimer timer=new AnimationTimer() {
+    	
+		
+        addButtons();
+        
+        
+        StackPane sp = new StackPane();
+        
+        mainPane.getChildren().add(sp);
+        mainPane.getChildren().add(player);
+        play();
+        
+
+    }
+    
+    public void play()
+    {
+    	mainStage.setScene(mainScene);
+        mainStage.show();
+    	pause=new PauseScreen(mainStage,mainScene,homeScene);
+    	timer=new AnimationTimer() {
     		public void handle(long now) {
+    			if(pause.getSaved())
+    			{
+    				saved=true;
+    				setName(pause.getName());
+    				stop();
+    				mainStage.setScene(prevScene);
+    				
+    				
+    			}
     			
     			checkCollide();
     			
@@ -96,7 +142,7 @@ public class Game{
     			
     			if(player.getY()<obstacles.get(obstacles.size()-2).getRoot().getBoundsInParent().getCenterY())
     	    	{
-    				System.out.println("nacho");
+    				System.out.println("assigning new components");
     	    		assignObstacles();
     	    		try {
 						assignColorSwitchers();
@@ -116,11 +162,12 @@ public class Game{
     	
     	timer.start();
     	
+    	
     	mainScene.setOnKeyPressed(e -> {
-    		if(e.getCode() == KeyCode.A){
+    		if(e.getCode() == KeyCode.A && flagA==0){
     			
     			flag=0;
-    			AnimationTimer timer2=new AnimationTimer() {
+    			timer2=new AnimationTimer() {
     				public void handle(long now) {
     					if((player.getY()-20) > HEIGHT/2)
     					{
@@ -145,26 +192,38 @@ public class Game{
     	
     	
     	
-    	mainStage.setScene(mainScene);
-        mainStage.show();
-        addButtons();
-        
-        
-        StackPane sp = new StackPane();
-        
-        mainPane.getChildren().add(sp);
-        mainPane.getChildren().add(player);
+    	
         
         pause_button.setOnAction(e -> {
         	try {
-				pause();
+        		timer.stop();
+				pauseScreen();
+
+				
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
         });
         
-
+        
+        AnimationTimer timer3=new AnimationTimer() {
+    		public void handle(long now) {
+    			if(pause.getSaved())
+    			{
+    				timer.start();
+    				stop();
+    			}
+    			else if(pause.getResume())
+    			{
+    				pause.setResume();
+    				timer.start();
+    			}
+    		}
+    		
+    	};
+    	timer3.start();
+       
     }
     
 	public void addButtons()
@@ -194,11 +253,16 @@ public class Game{
 	}
 	
 	
-    public void pause() throws FileNotFoundException
+    public void pauseScreen() throws FileNotFoundException
     {
     	//System.exit(0);
-    	PauseScreen pause=new PauseScreen(mainStage,mainScene);
+//    	pause=new PauseScreen(mainStage,mainScene);
         pause.run();
+//        System.out.println("lets go");
+//        if(pause.getSaved())
+//        {
+//        	System.out.println("save it");
+//        }
     }
     
     void assignObstacles()
@@ -311,35 +375,66 @@ public class Game{
     
     public void checkCollide() {
     	
-    	obstacles.get(obstacles.size()-3).checkCollision(player);
+    	boolean hit_square=false,hit_x=false,hit_circle=false;
+    	
+    	hit_square=obstacles.get(obstacles.size()-3).checkCollision(player);
     	
 		if (obstacles.size()<=3) 
 		{
-			obstacles.get(obstacles.size()-1).checkCollision(player);
+			hit_circle=obstacles.get(obstacles.size()-1).checkCollision(player);
 		}
 		else 
 		{
-			obstacles.get(obstacles.size()-4).checkCollision(player);
+			hit_circle=obstacles.get(obstacles.size()-4).checkCollision(player);
 		}
 		
 		if (obstacles.size()<=3) 
 		{
-			obstacles.get(obstacles.size()-2).checkCollision(player);
+			hit_x=obstacles.get(obstacles.size()-2).checkCollision(player);
 		}
 		else 
 		{
-			obstacles.get(obstacles.size()-5).checkCollision(player);
+			hit_x=obstacles.get(obstacles.size()-5).checkCollision(player);
 		}
 		
-		if (colorSwitchers.size()<=3) {
-			player=colorSwitchers.get(colorSwitchers.size()-1).checkCollision(player);
-			player=colorSwitchers.get(colorSwitchers.size()-2).checkCollision(player);
-			player=colorSwitchers.get(colorSwitchers.size()-3).checkCollision(player);
+		
+		boolean colorHit=false;
+		if (colorSwitchers.size()<=3)
+		{
+			
+			for(int i=1;i<=3;++i)
+			{
+				
+				if(colorSwitchers.get(colorSwitchers.size()-i).getUsed()==false)
+				{
+					player=colorSwitchers.get(colorSwitchers.size()-i).checkCollision(player);
+					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
+					if(colorHit)
+					{
+						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
+						break;
+					}
+				}
+			}
+			
+			
 		}
-		else {
-			player=colorSwitchers.get(colorSwitchers.size()-3).checkCollision(player);
-			player=colorSwitchers.get(colorSwitchers.size()-4).checkCollision(player);
-			player=colorSwitchers.get(colorSwitchers.size()-5).checkCollision(player);
+		else 
+		{
+			for(int i=3;i<=5;++i)
+			{
+				
+				if(colorSwitchers.get(colorSwitchers.size()-i).getUsed()==false)
+				{
+					player=colorSwitchers.get(colorSwitchers.size()-i).checkCollision(player);
+					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
+					if(colorHit)
+					{
+						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
+						break;
+					}
+				}
+			}
 		}
 		
 		boolean starHit=false;
@@ -351,6 +446,7 @@ public class Game{
 					starHit=stars.get(stars.size()-i).checkCollision(player);
 					if(starHit)
 					{
+						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
 						score++;
 						break;
 					}
@@ -366,6 +462,7 @@ public class Game{
 					starHit=stars.get(stars.size()-i).checkCollision(player);
 					if(starHit)
 					{
+						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
 						score++;
 						break;
 					}
@@ -377,7 +474,14 @@ public class Game{
 		
 //		System.out.println("Score : "+score);
 		
-
+		if(hit_square || hit_circle || hit_x)
+		{
+			timer2.stop();
+			flagA=1;
+			timer.stop();
+			timer2.stop();
+			
+		}
     }
     
     public void moveObstacles()
@@ -402,6 +506,11 @@ public class Game{
     	{
     		c.moveDown();
     	}
+    }
+    
+    public boolean getSaved()
+    {
+    	return saved;
     }
     
     

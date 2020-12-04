@@ -34,12 +34,15 @@ public class GameMode{
 	
 	private Button mode_classic_button,mode_teaser_button,back_button;
 	
-	GameMode(Stage stage,Scene tempScene)
+	private Classic c;
+	
+	GameMode(Stage stage,Scene tempScene) throws FileNotFoundException
 	{
 		this.mainStage=stage;
 		prevScene=tempScene;
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
+		c=new Classic(mainStage,mainScene,prevScene);
 	}
 	
 	public void run() throws FileNotFoundException
@@ -113,7 +116,7 @@ public class GameMode{
 	
 	public void mode_classic() throws FileNotFoundException
 	{        
-        Classic c=new Classic(mainStage,mainScene);
+        
         c.run();
 	}
 	
