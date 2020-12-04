@@ -156,7 +156,12 @@ public class Game{
         mainPane.getChildren().add(player);
         
         pause_button.setOnAction(e -> {
-        	pause();
+        	try {
+				pause();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
         });
         
 
@@ -189,9 +194,11 @@ public class Game{
 	}
 	
 	
-    public void pause()
+    public void pause() throws FileNotFoundException
     {
-    	System.exit(0);
+    	//System.exit(0);
+    	PauseScreen pause=new PauseScreen(mainStage,mainScene);
+        pause.run();
     }
     
     void assignObstacles()
