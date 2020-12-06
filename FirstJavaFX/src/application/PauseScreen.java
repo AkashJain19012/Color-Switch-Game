@@ -148,7 +148,7 @@ public class PauseScreen {
 		name_field.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		name_field.setAlignment(Pos.BASELINE_CENTER);
 		
-		Image img1 = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\home.png"));  
+		Image img1 = new Image(("home.png"));  
 	    ImageView view1 = new ImageView(img1);
 	    view1.setFitHeight(50);
 	    view1.setPreserveRatio(true);

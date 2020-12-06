@@ -21,7 +21,7 @@ public class Star {
 	}
 	
 	public void create(int y) throws FileNotFoundException {
-		Image image = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\star.png"));  
+		Image image = new Image(("star.png"));  
 	      
 	      ImageView imageView = new ImageView(image); 
 	      imageView.setX(190); 

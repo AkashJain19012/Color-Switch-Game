@@ -51,7 +51,7 @@ public class GameMode{
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
 		
-		Image image = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\gamemodes.png"));  
+		Image image = new Image(("gamemodes.png"));  
 	    ImageView imageView = new ImageView(image); 
 	    imageView.setX(50); 
 	    imageView.setY(50); 

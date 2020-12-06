@@ -181,7 +181,10 @@ public class Game{
     						moveColorSwitchers();
     					}
     					flag++;
-    					if (flag>30) {
+//    					if (flag>30) {
+//    						stop();
+//    					}
+    					if (flag>25) {
     						stop();
     					}
     				}
@@ -480,6 +483,9 @@ public class Game{
 			flagA=1;
 			timer.stop();
 			timer2.stop();
+			
+			HitScreen hit_screen=new HitScreen(mainStage,mainScene,homeScene);
+			hit_screen.run();
 			
 		}
     }

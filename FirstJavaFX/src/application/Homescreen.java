@@ -50,7 +50,7 @@ public class Homescreen{
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
 		
-		Image image = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\colorswitch.png"));    
+		Image image = new Image(("colorswitch.png"));    
 	    ImageView imageView = new ImageView(image);
 	    imageView.setX(50); 
 	    imageView.setY(50);
@@ -62,7 +62,7 @@ public class Homescreen{
 		
         mainStage.setScene(mainScene);  
         mainStage.setTitle("COLOR SWITCH"); 
-        mainStage.getIcons().add(new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\icon.png")));
+        mainStage.getIcons().add(new Image(("icon.png")));
         mainStage.show();  
         
 		addButtons();
