@@ -27,9 +27,11 @@ public class HitScreen {
 	private Scene mainScene,prevScene,homeScene;
 	private Label hit_label;
 	
+	private boolean useStar;
+	
 	HitScreen(Stage stage,Scene tempScene,Scene homeScene)
 	{
-		
+		useStar=false;
 		this.mainStage=stage;
 		prevScene=tempScene;
 		mainPane = new AnchorPane(); 
@@ -70,6 +72,8 @@ public class HitScreen {
 
 	private void useStars() {
 		// TODO Auto-generated method stub
+		useStar=true;
+		mainStage.setScene(prevScene);
 		
 		
 	}
@@ -78,7 +82,16 @@ public class HitScreen {
 		// TODO Auto-generated method stub
 		System.exit(0);
 	}
+	
+	public boolean getUseStar()
+	{
+		return useStar;
+	}
 
+	public void setUseStar()
+	{
+		useStar=false;
+	}
 	public void addButtons() {
 		
 		Image img1 = new Image(("home.png"));  

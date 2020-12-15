@@ -37,7 +37,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Rotate; 
 import javafx.scene.shape.Shape;
 
-public class Game{ 
+public class Game implements Cloneable{ 
 	
 	private static final int HEIGHT = 600;
 	private static final int WIDTH = 400;
@@ -51,8 +51,9 @@ public class Game{
 	private TextField score_display;
 	
 	private PauseScreen pause;
+	private HitScreen hit_screen;
 	
-	boolean saved=false;
+	boolean saved,closed;
 	
 	private Ball player;
 	private int score=0,flagA;
@@ -68,6 +69,8 @@ public class Game{
 	
 	Game(Stage stage, Scene tempScene,Scene homeScene)
 	{
+		saved=false;
+		closed=false;
 		flagA=0;
 		mainStage=stage;
 		prevScene= tempScene;
@@ -79,6 +82,11 @@ public class Game{
 		this.homeScene=homeScene;
 		
 	}
+	
+	public Object clone() throws CloneNotSupportedException 
+	{ 
+		return super.clone(); 
+	} 
 	
 	public void setName(String name)
 	{
@@ -108,9 +116,9 @@ public class Game{
         addButtons();
         
         
-        StackPane sp = new StackPane();
-        
-        mainPane.getChildren().add(sp);
+//        StackPane sp = new StackPane();
+//        
+//        mainPane.getChildren().add(sp);
         mainPane.getChildren().add(player);
         play();
         
@@ -122,21 +130,31 @@ public class Game{
     	mainStage.setScene(mainScene);
         mainStage.show();
     	pause=new PauseScreen(mainStage,mainScene,homeScene);
+    	hit_screen=new HitScreen(mainStage,mainScene,homeScene);
+    	
     	timer=new AnimationTimer() {
     		public void handle(long now) {
     			if(pause.getSaved())
     			{
     				saved=true;
     				setName(pause.getName());
+    				//pause.setSaved();
     				stop();
     				mainStage.setScene(prevScene);
     				
+    			}
+    			
+    			if(pause.getClosed())
+    			{
+    				closed=true;
     				
     			}
     			
+    			
+    			
     			checkCollide();
     			
-    			player.setY(3);
+    			player.setY(2.5);
     			
     			//System.out.println(player.getY());
     			
@@ -171,11 +189,11 @@ public class Game{
     				public void handle(long now) {
     					if((player.getY()-20) > HEIGHT/2)
     					{
-    						player.setY(-6);
+    						player.setY(-5);
     					}
     					else
     					{
-    						player.setY(-6);
+    						player.setY(-5);
     						moveObstacles();
     						moveStars();
     						moveColorSwitchers();
@@ -226,7 +244,136 @@ public class Game{
     		
     	};
     	timer3.start();
+    	
+    	AnimationTimer timer4=new AnimationTimer() {
+    		public void handle(long now) {
+    			if(hit_screen.getUseStar())
+    			{
+    				score--;
+    				flagA=0;
+    				hit_screen.setUseStar();
+    				timer.start();
+    			}
+    		}
+    		
+    	};
+    	timer4.start();
+    	
+    	
        
+    }
+    
+    public void checkCollide() {
+    	
+    	boolean hit_square=false,hit_x=false,hit_circle=false;
+    	
+    	hit_square=obstacles.get(obstacles.size()-3).checkCollision(player);
+    	
+		if (obstacles.size()<=3) 
+		{
+			hit_circle=obstacles.get(obstacles.size()-1).checkCollision(player);
+		}
+		else 
+		{
+			hit_circle=obstacles.get(obstacles.size()-4).checkCollision(player);
+		}
+		
+		if (obstacles.size()<=3) 
+		{
+			hit_x=obstacles.get(obstacles.size()-2).checkCollision(player);
+		}
+		else 
+		{
+			hit_x=obstacles.get(obstacles.size()-5).checkCollision(player);
+		}
+		
+		
+		boolean colorHit=false;
+		if (colorSwitchers.size()<=3)
+		{
+			
+			for(int i=1;i<=3;++i)
+			{
+				
+				if(colorSwitchers.get(colorSwitchers.size()-i).getUsed()==false)
+				{
+					player=colorSwitchers.get(colorSwitchers.size()-i).checkCollision(player);
+					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
+					if(colorHit)
+					{
+						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
+						break;
+					}
+				}
+			}
+			
+			
+		}
+		else 
+		{
+			for(int i=3;i<=5;++i)
+			{
+				
+				if(colorSwitchers.get(colorSwitchers.size()-i).getUsed()==false)
+				{
+					player=colorSwitchers.get(colorSwitchers.size()-i).checkCollision(player);
+					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
+					if(colorHit)
+					{
+						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
+						break;
+					}
+				}
+			}
+		}
+		
+		boolean starHit=false;
+		if (stars.size()<=3) {
+			for(int i=1;i<=3;++i)
+			{
+				if(stars.get(stars.size()-i).getUsed()==false)
+				{
+					starHit=stars.get(stars.size()-i).checkCollision(player);
+					if(starHit)
+					{
+						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
+						score++;
+						break;
+					}
+				}
+			}
+		}
+		else {
+			for(int i=3;i<=5;++i)
+			{
+				
+				if(stars.get(stars.size()-i).getUsed()==false)
+				{
+					starHit=stars.get(stars.size()-i).checkCollision(player);
+					if(starHit)
+					{
+						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
+						score++;
+						break;
+					}
+				}	
+			}
+		}
+		
+		score_display.setText(Integer.toString(score));
+		
+//		System.out.println("Score : "+score);
+		
+		if(hit_square || hit_circle || hit_x)
+		{
+			timer2.stop();
+			flagA=1;
+			timer.stop();
+			flag=50;
+			player.setY(50);
+			hit_screen.run();
+			
+		}
     }
     
 	public void addButtons()
@@ -376,119 +523,7 @@ public class Game{
         
     }
     
-    public void checkCollide() {
-    	
-    	boolean hit_square=false,hit_x=false,hit_circle=false;
-    	
-    	hit_square=obstacles.get(obstacles.size()-3).checkCollision(player);
-    	
-		if (obstacles.size()<=3) 
-		{
-			hit_circle=obstacles.get(obstacles.size()-1).checkCollision(player);
-		}
-		else 
-		{
-			hit_circle=obstacles.get(obstacles.size()-4).checkCollision(player);
-		}
-		
-		if (obstacles.size()<=3) 
-		{
-			hit_x=obstacles.get(obstacles.size()-2).checkCollision(player);
-		}
-		else 
-		{
-			hit_x=obstacles.get(obstacles.size()-5).checkCollision(player);
-		}
-		
-		
-		boolean colorHit=false;
-		if (colorSwitchers.size()<=3)
-		{
-			
-			for(int i=1;i<=3;++i)
-			{
-				
-				if(colorSwitchers.get(colorSwitchers.size()-i).getUsed()==false)
-				{
-					player=colorSwitchers.get(colorSwitchers.size()-i).checkCollision(player);
-					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
-					if(colorHit)
-					{
-						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
-						break;
-					}
-				}
-			}
-			
-			
-		}
-		else 
-		{
-			for(int i=3;i<=5;++i)
-			{
-				
-				if(colorSwitchers.get(colorSwitchers.size()-i).getUsed()==false)
-				{
-					player=colorSwitchers.get(colorSwitchers.size()-i).checkCollision(player);
-					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
-					if(colorHit)
-					{
-						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
-						break;
-					}
-				}
-			}
-		}
-		
-		boolean starHit=false;
-		if (stars.size()<=3) {
-			for(int i=1;i<=3;++i)
-			{
-				if(stars.get(stars.size()-i).getUsed()==false)
-				{
-					starHit=stars.get(stars.size()-i).checkCollision(player);
-					if(starHit)
-					{
-						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
-						score++;
-						break;
-					}
-				}
-			}
-		}
-		else {
-			for(int i=3;i<=5;++i)
-			{
-				
-				if(stars.get(stars.size()-i).getUsed()==false)
-				{
-					starHit=stars.get(stars.size()-i).checkCollision(player);
-					if(starHit)
-					{
-						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
-						score++;
-						break;
-					}
-				}	
-			}
-		}
-		
-		score_display.setText(Integer.toString(score));
-		
-//		System.out.println("Score : "+score);
-		
-		if(hit_square || hit_circle || hit_x)
-		{
-			timer2.stop();
-			flagA=1;
-			timer.stop();
-			timer2.stop();
-			
-			HitScreen hit_screen=new HitScreen(mainStage,mainScene,homeScene);
-			hit_screen.run();
-			
-		}
-    }
+
     
     public void moveObstacles()
     {
@@ -518,6 +553,23 @@ public class Game{
     {
     	return saved;
     }
+    
+    public void setSaved()
+    {
+    	saved=false;
+    }
+    
+    public void setClosed()
+    {
+    	closed=true;
+    }
+    
+    public boolean getClosed()
+    {
+    	return closed; 
+    }
+    
+    
     
     
 } 

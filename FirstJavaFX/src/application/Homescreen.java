@@ -35,11 +35,14 @@ public class Homescreen{
 	
 	private Button start_button,exit_button;
 	
+	private GameMode game;
+	
 	public Homescreen() throws FileNotFoundException
 	{
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
 		mainStage = new Stage();
+		game = new GameMode(mainStage,mainScene);
 		run();
 		
 	}
@@ -114,8 +117,7 @@ public class Homescreen{
 	
 	public void start() throws FileNotFoundException
 	{
-		GameMode g = new GameMode(mainStage,mainScene);
-		g.run();
+		game.run();
 		
 	}
 	

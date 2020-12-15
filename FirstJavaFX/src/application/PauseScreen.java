@@ -7,6 +7,9 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -17,7 +20,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class PauseScreen {
@@ -30,12 +35,11 @@ public class PauseScreen {
 	private Scene mainScene,prevScene,homeScene;
 	
 	private Button resume_button,save_button,home_button;
-	private Label pause_label;
+	private Label pause_label,ErrorNameLabel;
 	private TextField name_field;
 	
 	private int flag=0;
-	private static boolean saved;
-	private static boolean resume;
+	private static boolean saved,resume,closed;
 	private String name;
 	
 	
@@ -46,6 +50,7 @@ public class PauseScreen {
 		prevScene=tempScene;
 		saved=false;
 		resume=false;
+		closed=false;
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
 		this.homeScene=homeScene;
@@ -65,6 +70,7 @@ public class PauseScreen {
         addButtons();
         
         home_button.setOnAction(e -> {
+        	
 			backToHome();
 		});
         
@@ -80,6 +86,7 @@ public class PauseScreen {
 	
 	private void backToHome() {
 		// TODO Auto-generated method stub
+		closed=true;
 		mainStage.setScene(homeScene);
 		
 	}
@@ -103,8 +110,30 @@ public class PauseScreen {
 	public void save()
 	{
 		name=name_field.getText();
-		saved=true;
-		mainStage.setScene(prevScene);
+		if(name.isEmpty() && !mainPane.getChildren().contains(ErrorNameLabel))
+		{
+			mainPane.getChildren().add(ErrorNameLabel);
+			
+//			Dialog<String> dialog = new Dialog<String>();
+//		    dialog.setTitle("ERROR");
+//		    ButtonType type = new ButtonType("Ok", ButtonData.OK_DONE);
+//		    dialog.setContentText("ENTER A NAME");
+//		    dialog.getDialogPane().getButtonTypes().add(type);
+//		    dialog.setX(650);
+//		    dialog.setY(300);
+//		    dialog.getDialogPane().setLayoutX(0);
+//		    dialog.getDialogPane().setLayoutY(0);
+//		    dialog.getDialogPane().setPrefSize(250, 120);
+//		    dialog.showAndWait();
+		    
+		}
+		else if(!name.isEmpty())
+		{
+			saved=true;
+			mainPane.getChildren().remove(ErrorNameLabel);			
+			mainStage.setScene(prevScene);
+		}
+		
 		
 	}
 	
@@ -117,6 +146,22 @@ public class PauseScreen {
 	{
 		return saved;
 	}
+	
+	public void setSaved()
+	{
+		saved=false;
+	}
+	
+	public boolean getClosed()
+	{
+		return closed;
+	}
+	
+	
+	public void setClosed()
+	{
+		closed=false;
+	}
 
 
 	public void addButtons() throws FileNotFoundException 
@@ -124,7 +169,7 @@ public class PauseScreen {
 		
 		resume_button=new Button("RESUME");
 		resume_button.setLayoutX(150);
-		resume_button.setLayoutY(200);
+		resume_button.setLayoutY(160);
 		resume_button.setMinSize(120,70);
 		resume_button.setMaxSize(120, 70);
 		resume_button.setStyle("-fx-background-color: BlueViolet");
@@ -133,7 +178,7 @@ public class PauseScreen {
 	    
 	    save_button=new Button("SAVE AS");
 		save_button.setLayoutX(150);
-		save_button.setLayoutY(300);
+		save_button.setLayoutY(260);
 		save_button.setMinSize(120,70);
 		save_button.setMaxSize(120, 70);
 		save_button.setStyle("-fx-background-color: BlueViolet");
@@ -141,10 +186,11 @@ public class PauseScreen {
 		save_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		
 		name_field = new TextField ();
+		name_field.setPromptText("NAME");
 		name_field.setLayoutX(150);
-		name_field.setLayoutY(400);
+		name_field.setLayoutY(360);
 		name_field.setPrefSize(120, 70);
-		name_field.setStyle("-fx-background-color: BlueViolet");
+		name_field.setStyle("-fx-background-color: White");
 		name_field.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		name_field.setAlignment(Pos.BASELINE_CENTER);
 		
@@ -158,6 +204,13 @@ public class PauseScreen {
 	    home_button.setPrefSize(50, 50);
 	    home_button.setGraphic(view1);
 	    home_button.setStyle("-fx-background-color: transparent;");
+	    
+	    ErrorNameLabel=new Label("Enter A Name !!");
+		ErrorNameLabel.setLayoutX(150);
+		ErrorNameLabel.setLayoutY(450);
+		ErrorNameLabel.setTextFill(Color.RED);
+		ErrorNameLabel.setFont(Font.font ("Verdana",FontWeight.BOLD, 16));
+		ErrorNameLabel.setStyle("-fx-background-color: transparent;");
 		
 //		mainPane.getChildren().add(pause_label);
 		mainPane.getChildren().add(resume_button);
