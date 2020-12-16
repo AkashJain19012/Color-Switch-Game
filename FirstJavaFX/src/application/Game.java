@@ -3,6 +3,7 @@ package application;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.RotateTransition;
@@ -193,7 +194,7 @@ public class Game implements Cloneable{
     					}
     					else
     					{
-    						player.setY(-5);
+    						player.setY(-2);
     						moveObstacles();
     						moveStars();
     						moveColorSwitchers();
@@ -265,26 +266,17 @@ public class Game implements Cloneable{
     
     public void checkCollide() {
     	
-    	boolean hit_square=false,hit_x=false,hit_circle=false;
-    	
-    	hit_square=obstacles.get(obstacles.size()-3).checkCollision(player);
-    	
+    	boolean hit=false;
+    	hit=obstacles.get(obstacles.size()-3).checkCollision(player);
 		if (obstacles.size()<=3) 
 		{
-			hit_circle=obstacles.get(obstacles.size()-1).checkCollision(player);
+			hit = hit | obstacles.get(obstacles.size()-1).checkCollision(player);
+			hit = hit | obstacles.get(obstacles.size()-2).checkCollision(player);
 		}
 		else 
 		{
-			hit_circle=obstacles.get(obstacles.size()-4).checkCollision(player);
-		}
-		
-		if (obstacles.size()<=3) 
-		{
-			hit_x=obstacles.get(obstacles.size()-2).checkCollision(player);
-		}
-		else 
-		{
-			hit_x=obstacles.get(obstacles.size()-5).checkCollision(player);
+			hit = hit | obstacles.get(obstacles.size()-4).checkCollision(player);
+			hit = hit | obstacles.get(obstacles.size()-5).checkCollision(player);
 		}
 		
 		
@@ -301,6 +293,7 @@ public class Game implements Cloneable{
 					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
 					if(colorHit)
 					{
+						System.out.println("colorHit");
 						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
 						break;
 					}
@@ -320,6 +313,7 @@ public class Game implements Cloneable{
 					colorHit=colorSwitchers.get(colorSwitchers.size()-i).getUsed();
 					if(colorHit)
 					{
+						System.out.println("colorHit");
 						mainPane.getChildren().remove(colorSwitchers.get(colorSwitchers.size()-i).getRoot());
 						break;
 					}
@@ -336,6 +330,7 @@ public class Game implements Cloneable{
 					starHit=stars.get(stars.size()-i).checkCollision(player);
 					if(starHit)
 					{
+						System.out.println("StarHit");
 						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
 						score++;
 						break;
@@ -352,6 +347,7 @@ public class Game implements Cloneable{
 					starHit=stars.get(stars.size()-i).checkCollision(player);
 					if(starHit)
 					{
+						System.out.println("StarHit");
 						mainPane.getChildren().remove(stars.get(stars.size()-i).getRoot());
 						score++;
 						break;
@@ -364,8 +360,9 @@ public class Game implements Cloneable{
 		
 //		System.out.println("Score : "+score);
 		
-		if(hit_square || hit_circle || hit_x)
+		if(hit)
 		{
+			System.out.println("obstacleHit");
 			timer2.stop();
 			flagA=1;
 			timer.stop();
@@ -420,16 +417,32 @@ public class Game implements Cloneable{
     	if(obstacles.size()>=3)
     	{
     		Obstacle o=obstacles.get(obstacles.size()-1);
-    		obstacles.add(new squareObstacle("square"));
     		
-        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700);
-        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
-        	obstacles.add(new xObstacle("x"));
-        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1100);
-        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
-        	obstacles.add(new circleObstacle("circle"));
-        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-1500);
-        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+    		Random rd=new Random();
+    		
+    		
+    		for(int i=0;i<3;++i)
+    		{
+    			int x=rd.nextInt(3);
+    			if(x==0)
+    			{
+    				obstacles.add(new squareObstacle("square"));
+    	        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700-i*400);
+    	        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+    			}
+    			else if(x==1)
+    			{
+    				obstacles.add(new xObstacle("x"));
+    	        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700-i*400);
+    	        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+    			}
+    			else
+    			{
+    				obstacles.add(new circleObstacle("circle"));
+    	        	obstacles.get(obstacles.size()-1).create((int)o.getRoot().getBoundsInParent().getCenterY()-700-i*400);
+    	        	mainPane.getChildren().add(obstacles.get(obstacles.size()-1).getRoot());
+    			}
+    		}	
     	}
     	else
     	{
@@ -489,7 +502,7 @@ public class Game implements Cloneable{
     
     void assignColorSwitchers() throws FileNotFoundException
     {
-    	if(stars.size()>=3)
+    	if(colorSwitchers.size()>=3)
     	{
     		colorSwitcher o=colorSwitchers.get(colorSwitchers.size()-1);
     		colorSwitchers.add(new colorSwitcher());
