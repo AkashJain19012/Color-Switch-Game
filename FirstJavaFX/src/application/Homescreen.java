@@ -35,11 +35,14 @@ public class Homescreen{
 	
 	private Button start_button,exit_button;
 	
+	private GameMode game;
+	
 	public Homescreen() throws FileNotFoundException
 	{
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
 		mainStage = new Stage();
+		game = new GameMode(mainStage,mainScene);
 		run();
 		
 	}
@@ -50,7 +53,7 @@ public class Homescreen{
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
 		
-		Image image = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\colorswitch.png"));    
+		Image image = new Image(("colorswitch.png"));    
 	    ImageView imageView = new ImageView(image);
 	    imageView.setX(50); 
 	    imageView.setY(50);
@@ -62,7 +65,7 @@ public class Homescreen{
 		
         mainStage.setScene(mainScene);  
         mainStage.setTitle("COLOR SWITCH"); 
-        mainStage.getIcons().add(new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\icon.png")));
+        mainStage.getIcons().add(new Image(("icon.png")));
         mainStage.show();  
         
 		addButtons();
@@ -114,8 +117,7 @@ public class Homescreen{
 	
 	public void start() throws FileNotFoundException
 	{
-		GameMode g = new GameMode(mainStage,mainScene);
-		g.run();
+		game.run();
 		
 	}
 	

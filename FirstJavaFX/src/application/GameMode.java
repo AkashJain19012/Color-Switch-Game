@@ -32,14 +32,20 @@ public class GameMode{
 	private AnchorPane mainPane;
 	private Scene mainScene,prevScene;
 	
-	private Button mode_classic_button,mode_teaser_button,back_button;
+	private Shoot s;
 	
-	GameMode(Stage stage,Scene tempScene)
+	private Button mode_classic_button,mode_shoot_button,back_button;
+	
+	private Classic c;
+	
+	GameMode(Stage stage,Scene tempScene) throws FileNotFoundException
 	{
 		this.mainStage=stage;
 		prevScene=tempScene;
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
+		c=new Classic(mainStage,mainScene,prevScene);
+		s=new Shoot(mainStage,mainScene,prevScene);
 	}
 	
 	public void run() throws FileNotFoundException
@@ -48,7 +54,7 @@ public class GameMode{
 		Background background = new Background(background_fill); 
 		mainPane.setBackground(background);
 		
-		Image image = new Image(new FileInputStream("C:\\Users\\AKASH\\eclipse-workspace\\FirstJavaFX\\src\\Images\\gamemodes.png"));  
+		Image image = new Image(("gamemodes.png"));  
 	    ImageView imageView = new ImageView(image); 
 	    imageView.setX(50); 
 	    imageView.setY(50); 
@@ -64,6 +70,14 @@ public class GameMode{
 		mode_classic_button.setOnAction(e -> {
 			try {
 				mode_classic();
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		mode_shoot_button.setOnAction(e -> {
+			try {
+				mode_shoot();
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -86,14 +100,14 @@ public class GameMode{
 		mode_classic_button.setTextFill(Color.WHITE);
 		mode_classic_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		
-		mode_teaser_button=new Button("TEASER");
-		mode_teaser_button.setLayoutX(130);
-		mode_teaser_button.setLayoutY(270);
-		mode_teaser_button.setMinSize(120,70);
-		mode_teaser_button.setMaxSize(120, 70);
-		mode_teaser_button.setStyle("-fx-background-color: BlueViolet");
-		mode_teaser_button.setTextFill(Color.WHITE);
-		mode_teaser_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
+		mode_shoot_button=new Button("SHOOT");
+		mode_shoot_button.setLayoutX(130);
+		mode_shoot_button.setLayoutY(270);
+		mode_shoot_button.setMinSize(120,70);
+		mode_shoot_button.setMaxSize(120, 70);
+		mode_shoot_button.setStyle("-fx-background-color: BlueViolet");
+		mode_shoot_button.setTextFill(Color.WHITE);
+		mode_shoot_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
 		
 		back_button=new Button("BACK");
 		back_button.setLayoutX(130);
@@ -106,14 +120,20 @@ public class GameMode{
         
         mainPane.getChildren().add(mode_classic_button);
         mainPane.getChildren().add(back_button);
-        mainPane.getChildren().add(mode_teaser_button);
+        mainPane.getChildren().add(mode_shoot_button);
         
         
 	}
 	
+	public void mode_shoot() throws FileNotFoundException
+	{        
+        
+        s.run();
+	}
+	
 	public void mode_classic() throws FileNotFoundException
 	{        
-        Classic c=new Classic(mainStage,mainScene);
+        
         c.run();
 	}
 	

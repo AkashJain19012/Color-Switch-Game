@@ -2,10 +2,15 @@ package application;
 	
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -28,33 +33,43 @@ public class Classic{
 	
 	private static final int HEIGHT = 600;
 	private static final int WIDTH = 400;
+	private int id=-1;
 	
 	private Stage mainStage;
-	private AnchorPane mainPane;
-	private Scene mainScene,prevScene;
+	private AnchorPane mainPane,resumePane;
+	private Scene mainScene,prevScene,homeScene,resumeScene;
+	private Game g,g2;
+	private ComboBox list;
+	private TextField text;
 	
-	private Button play_button,resume_button,back_button;
+	private ArrayList<Integer> l;
 	
-	public Classic(Stage stage, Scene tempScene) throws FileNotFoundException
+	private Button play_button,resume_button,back_button,ok_button;
+	
+	private ArrayList<String> savedGames;
+	
+	public Classic(Stage stage, Scene tempScene,Scene homeScene) throws FileNotFoundException
 	{
 		mainPane = new AnchorPane(); 
 		mainScene = new Scene(mainPane, WIDTH, HEIGHT );
 		mainStage = stage;
 		prevScene=tempScene;
+		resumePane=new AnchorPane();
+		resumeScene=new Scene(resumePane,WIDTH,HEIGHT);
+		this.homeScene=homeScene;
+		BackgroundFill background_fill = new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY); 
+		Background background = new Background(background_fill); 
+		mainPane.setBackground(background);
+		resumePane.setBackground(background);
+		addButtons();
 		run();
 		
 	}
 	
 	public void run() throws FileNotFoundException
 	{
-		BackgroundFill background_fill = new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY); 
-		Background background = new Background(background_fill); 
-		mainPane.setBackground(background);
-		
         mainStage.setScene(mainScene);  
         mainStage.show();  
-		addButtons();
-		
 		
 		play_button.setOnAction(e->{
 			try {
@@ -66,13 +81,134 @@ public class Classic{
 		});
 		
 		resume_button.setOnAction( e-> {
-			resume();
+			try {
+				resume();
+				
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		
 		back_button.setOnAction(e -> {
 			back();
 		});
 	}
+
+	
+	public void play() throws FileNotFoundException
+	{
+		g=new Game(mainStage,mainScene,homeScene);
+		g.run();
+		System.out.println("making a new game");
+//		AnimationTimer timer=new AnimationTimer() {
+//    		public void handle(long now) {
+//    			if(g.getSaved())
+//    			{
+//    				savedGames.add(g);
+//    				
+//    				System.out.println("Initial Game Saved");
+//    				stop();
+//    			}
+//    		}
+//		};
+//		timer.start();
+		
+		
+	}
+	
+	public void resume() throws FileNotFoundException
+	{
+
+		id=-1;
+		System.out.println("In resume function");
+//		list.getItems().clear();
+//		l=new ArrayList<Integer>();
+		
+		
+		
+//		for(int i=0;i<savedGames.size();++i)
+//		{
+//			if(i<(savedGames.size()-1) && savedGames.get(i).getName()==savedGames.get(i+1).getName())
+//			{
+//				l.add(i-l.size());
+//			}
+//			if(savedGames.get(i).getClosed() || savedGames.get(i).getName()==null)
+//			{
+//				l.add(i-l.size());
+//			}
+//		}
+//		
+//		for(int i=0;i<l.size();++i)
+//		{
+//			savedGames.remove(savedGames.get(l.get(i)));
+//		}
+		
+//		for(int i=0;i<savedGames.size();++i)
+//		{
+//			System.out.println(savedGames.get(i));
+//			list.getItems().add(savedGames.get(i));
+//		}
+//		System.out.println(savedGames.size());
+		mainStage.setScene(resumeScene);
+		
+		ok_button.setOnAction(e->{
+			String name=text.getText();
+		if(name.isEmpty())
+		{
+		    System.out.println("Empty name");
+		}
+		else
+		{
+			
+//				for(int i=0;i<list.getItems().size();++i)
+//				{
+//					if(list.getValue()==savedGames.get(i))
+//					{
+//						id=i;
+//						break;
+//					}
+//				}
+//					g2=(Game)savedGames.get(id).clone();
+					try {
+					SavedData saveData=(SavedData)Management.load(name);
+					g=new Game(mainStage,mainScene,homeScene);
+					g.makePlayer(saveData.getName(), saveData.getBallCopy(), saveData.getStarUsed(), saveData.getScore());
+					g.makeObstacles(saveData.getObstacleCopy());
+					g.makeColorSwitchers(saveData.getColorSwitcherCopy());
+					g.makeStars(saveData.getStarCopy());
+					g.play();
+					System.out.println(saveData.name);
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+//				g2.setSaved();
+//				g2.play();
+//				AnimationTimer timer=new AnimationTimer() {
+//		    		public void handle(long now) {
+//		    			if(g2.getSaved())
+//		    			{
+//		    				savedGames.add(g2);
+//		    				
+//		    				System.out.println("Updated Game Saved");
+//		    				stop();
+//		    			}
+//		    		}
+//				};
+//				timer.start();
+		}
+			});
+		
+
+		
+		
+		
+	}
+	
 	
 	public void addButtons()
 	{
@@ -102,29 +238,45 @@ public class Classic{
         back_button.setStyle("-fx-background-color: BlueViolet");
 		back_button.setTextFill(Color.WHITE);
 		back_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
+		
+		ok_button=new Button("OK");
+		ok_button.setLayoutX(130);
+        ok_button.setLayoutY(300);
+        ok_button.setMinSize(120, 70);
+        ok_button.setMaxSize(120, 70);
+        ok_button.setStyle("-fx-background-color: BlueViolet");
+		ok_button.setTextFill(Color.WHITE);
+		ok_button.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
+		
+//		list= new ComboBox();
+//		list.setPromptText("SELECT A GAME");
+//		list.setLayoutX(100);
+//		list.setLayoutY(200);
+//		list.setPrefSize(200,40);
+//		list.setStyle("-fx-background-color: White");
+		
+		text = new TextField ();
+		text.setPromptText("NAME");
+		text.setLayoutX(130);
+		text.setLayoutY(200);
+		text.setPrefSize(120, 70);
+		text.setStyle("-fx-background-color: White");
+		text.setFont(Font.font ("Verdana",FontWeight.BOLD, 18));
+		text.setAlignment(Pos.BASELINE_CENTER);
         
         mainPane.getChildren().add(play_button);
         mainPane.getChildren().add(resume_button);
         mainPane.getChildren().add(back_button);
+        resumePane.getChildren().add(text);
+		resumePane.getChildren().add(ok_button);
         
         
-	}
-	
-	public void play() throws FileNotFoundException
-	{
-		Game g=new Game(mainStage,mainScene);
-		g.run();
-		
-	}
-	
-	public void resume()
-	{
-		
 	}
 	
 	public void back()
-	{        
-        mainStage.setScene(prevScene);
+	{    
+		System.out.println("back");
+		mainStage.setScene(prevScene);
 	}
 	
 	public Stage getMainStage()
